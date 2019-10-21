@@ -1,8 +1,13 @@
 <?php
 
 namespace App\Http\Controllers;
-
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
+use App\Http\Requests\BookRequest;
+use App\Book;
+use Illuminate\Support\Facades\Auth;
+use Carbon\Carbon;
+use Redirect;
 
 class BookController extends Controller
 {
@@ -13,7 +18,9 @@ class BookController extends Controller
      */
     public function index()
     {
-        return view('pages.book-manager');
+
+        $books = Book::all();
+        return view('pages.book-manager', compact('books'));
     }
 
     /**
@@ -32,9 +39,28 @@ class BookController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request)
+    public function store(BookRequest $request)
     {
-        //
+        $data = $request->only([
+            'title',
+            'author',
+            'publisher',
+            'publish_date',
+            'language',
+            'price',
+        ]);
+
+        //$data['user_id'] = Auth::id();
+
+        $data['publish_date'] = Carbon::parse($request->publish_date)->format('Y-m-d');
+
+        try {
+            $book = Book::create($data);
+        } catch (Exception $e) {
+            Log::error($e);
+            return back()->with('createFailed', 'Create failed!');
+        }
+        return back();
     }
 
     /**
@@ -66,9 +92,26 @@ class BookController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, $id)
+    public function update(BookRequest $request, $id)
     {
-        //
+        $data = $request->only([
+            'title',
+            'author',
+            'publisher',
+            'publish_date',
+            'language',
+            'price',
+        ]);
+
+        $book = Book::findOrFail($id);
+
+        try {
+            $book->update($data);
+        } catch (Exception $e) {
+            Log::error($e);
+            return back()->with('updateFailed', 'Update failed!');
+        }
+        return back();
     }
 
     /**
@@ -79,6 +122,13 @@ class BookController extends Controller
      */
     public function destroy($id)
     {
-        //
+        $book = Book::findOrFail($id);
+        try {
+            $book->delete();
+        } catch (\Exception $e) {
+            \Log::error($e);
+            return back()->with('status', 'Delete failed.');
+        }
+        return back();
     }
 }

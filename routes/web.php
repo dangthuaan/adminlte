@@ -24,3 +24,8 @@ Route::get('/admin', function () {
 });
 
 Route::get('/admin/books', 'BookController@index')->name('books.index');
+//Route::get('/admin/books/create', 'BookController@create')->name('books.create');
+Route::post('/admin/books', 'BookController@store')->name('books.store');
+//Route::get('/admin/book/{book}/edit', 'BookController@edit')->name('books.edit');
+Route::put('/admin/books/{book}', 'BookController@update')->name('books.update');
+Route::delete('/admin/books/{book}', 'BookController@destroy')->name('books.destroy');

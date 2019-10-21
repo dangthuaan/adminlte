@@ -24,10 +24,9 @@ desired effect
 <body class="hold-transition skin-green sidebar-mini">
 <div class="wrapper">
     @include('includes.header')
-    @include('includes.sidebar')
 
     @yield('content')
 </div>
-	@include('includes.footer')
+    @include('includes.footer')
 </body>
 </html>

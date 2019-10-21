@@ -174,3 +174,4 @@
         </div>
     </nav>
 </header>
+@include('includes.sidebar')
